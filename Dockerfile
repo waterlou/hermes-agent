@@ -56,7 +56,7 @@ RUN set -eux; \
       echo "No supported package manager found to install OpenCLI dependencies"; \
       exit 1; \
     fi; \
-    npm install -g @jackwener/opencli; \
+    npm install -g @jackwener/opencli @googleworkspace/cli; \
     mkdir -p /opt/opencli/extension; \
     EXT_URL="$(curl -fsSL https://api.github.com/repos/jackwener/opencli/releases/latest | grep -Eo 'https://[^"[:space:]]*opencli-extension\.zip' | head -n1)"; \
     test -n "${EXT_URL}"; \

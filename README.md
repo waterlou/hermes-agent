@@ -8,6 +8,7 @@ Docker image setup for a custom Hermes Agent environment based on `nousresearch/
 - Playwright with browser binaries (`chromium`, `firefox`, `webkit`)
 - Camoufox browser (installed via `camoufox fetch`)
 - OpenCLI (`@jackwener/opencli`)
+- Google Workspace CLI (`@googleworkspace/cli`, command: `gws`)
 - OpenCLI browser extension extracted to `/opt/opencli/extension`
 
 ## Build locally
