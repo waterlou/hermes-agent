@@ -66,7 +66,7 @@ RUN set -eux; \
       echo "No supported package manager found to install dependencies"; \
       exit 1; \
     fi; \
-    npm install -g playwright tldr@3.4.0 @jackwener/opencli @googleworkspace/cli; \
+    npm install -g playwright tldr@3.4.0 @bitwarden/cli @jackwener/opencli @googleworkspace/cli; \
     if command -v apt-get >/dev/null 2>&1; then \
       playwright install --with-deps chromium firefox webkit; \
     else \

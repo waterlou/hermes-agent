@@ -5,6 +5,7 @@ Docker image setup for a custom Hermes Agent environment based on `nousresearch/
 ## Included tools
 
 - GitHub CLI (`gh`)
+- Bitwarden CLI (`bw`)
 - Common CLI tools: `rg`/`rp`, `jq`, `curl`, `wget`, `yt-dlp`/`yt-ylp`, `tldr`, `htop`, `ffmpeg`, `pandoc`
 - Playwright with browser binaries (`chromium`, `firefox`, `webkit`)
 - Camoufox browser (installed via `camoufox fetch`)
