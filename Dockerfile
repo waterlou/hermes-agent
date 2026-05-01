@@ -88,4 +88,4 @@ RUN set -eux; \
     unzip -q /tmp/opencli-extension.zip -d /opt/opencli/extension; \
     rm -f /tmp/opencli-extension.zip
 
-ENTRYPOINT ["/opt/hermes/docker/entrypoint.sh"]
+ENTRYPOINT [ "/usr/bin/tini", "-g", "--", "/opt/hermes/docker/entrypoint.sh" ]
