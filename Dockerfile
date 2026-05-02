@@ -8,6 +8,7 @@ RUN set -eux; \
         curl \
         ffmpeg \
         gh \
+        gnupg \
         htop \
         jq \
         libasound2 \
@@ -27,6 +28,7 @@ RUN set -eux; \
         curl \
         ffmpeg \
         gh \
+        gnupg \
         htop \
         jq \
         libasound2t64 \
@@ -41,6 +43,10 @@ RUN set -eux; \
         tmux \
         unzip \
         wget; \
+      curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg; \
+      echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list; \
+      apt-get update; \
+      apt-get install -y --no-install-recommends google-cloud-cli; \
       rm -rf /var/lib/apt/lists/*; \
     elif command -v apk >/dev/null 2>&1; then \
       apk add --no-cache \
