@@ -78,8 +78,8 @@ RUN set -eux; \
     else \
       playwright install chromium firefox webkit; \
     fi; \
-    python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]" yt-dlp || \
-      python3 -m pip install --no-cache-dir -U "camoufox[geoip]" yt-dlp; \
+    python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]" yt-dlp docling || \
+      python3 -m pip install --no-cache-dir -U "camoufox[geoip]" yt-dlp docling; \
     python3 -m camoufox fetch; \
     if command -v rg >/dev/null 2>&1 && ! command -v rp >/dev/null 2>&1; then \
       ln -s "$(command -v rg)" /usr/local/bin/rp; \
