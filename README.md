@@ -50,8 +50,7 @@ docker build -t hermes-agent-custom .
 docker run --rm -it hermes-agent-custom
 ```
 
-The image keeps the same entrypoint as the base image:
-`/opt/hermes/docker/entrypoint.sh`
+Entrypoint: `tini -g -- /opt/hermes/docker/entrypoint.sh`
 
 ## Launch Chromium with OpenCLI extension
 
