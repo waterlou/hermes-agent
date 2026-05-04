@@ -4,15 +4,39 @@ Docker image setup for a custom Hermes Agent environment based on `nousresearch/
 
 ## Included tools
 
-- GitHub CLI (`gh`)
-- Bitwarden CLI (`bw`)
-- Google Cloud CLI (`gcloud`)
-- Common CLI tools: `rg`/`rp`, `jq`, `curl`, `wget`, `yt-dlp`/`yt-ylp`, `tldr`, `htop`, `ffmpeg`, `pandoc`
-- Playwright with browser binaries (`chromium`, `firefox`, `webkit`)
-- Camoufox browser (installed via `camoufox fetch`)
-- OpenCLI (`@jackwener/opencli`)
-- Google Workspace CLI (`@googleworkspace/cli`, command: `gws`)
-- OpenCLI browser extension extracted to `/opt/opencli/extension`
+### System packages
+
+| Package | Via |
+|---|---|
+| `ca-certificates`, `curl`, `ffmpeg`, `gh`, `gnupg`, `htop`, `jq`, `libasound2`, `libgtk-3-0`, `libx11-xcb1`, `nodejs`, `npm`, `pandoc`, `python3`, `python3-pip`, `ripgrep`, `tmux`, `unzip`, `wget` | apt / apk |
+| `google-cloud-cli` (`gcloud`) | apt (Google Cloud SDK repo) |
+
+### npm global packages
+
+| Package | Version | CLI command |
+|---|---|---|
+| `playwright` | `1.59.1` | |
+| `tldr` | `3.5.0` | `tldr` |
+| `@bitwarden/cli` | `2026.4.1` | `bw` |
+| `@jackwener/opencli` | `1.7.11` | `opencli` |
+| `@googleworkspace/cli` | `0.22.5` | `gws` |
+
+### Playwright browsers
+
+Installed via `playwright install`: `chromium`, `firefox`, `webkit`
+
+### pip packages
+
+| Package | Version |
+|---|---|
+| `camoufox[geoip]` | `0.4.11` |
+| `yt-dlp` | `2026.3.17` |
+| `docling` | `2.92.0` |
+
+### Other
+
+- OpenCLI browser extension (latest from GitHub releases) extracted to `/opt/opencli/extension`
+- Convenience symlinks: `rg` → `rp`, `yt-dlp` → `yt-ylp`
 
 ## Build locally
 
