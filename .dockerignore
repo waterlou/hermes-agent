@@ -1,0 +1,55 @@
+# Git
+.git/
+.gitattributes
+.gitignore
+.gitmodules
+
+# CI / GitHub
+.github/
+
+# Secrets and environment
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+credentials*
+service-account*.json
+
+# Dependencies (if built locally before COPY)
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Build artifacts and caches
+*.tar.gz
+*.tgz
+*.zip
+*.log
+.cache/
+.pip/
+.npm/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+.docker/
+
+# Temp files
+tmp/
+temp/
+*.tmp
