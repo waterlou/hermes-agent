@@ -8,7 +8,7 @@ Docker image setup for a custom Hermes Agent environment based on `nousresearch/
 
 | Package | Via |
 |---|---|
-| `ca-certificates`, `curl`, `ffmpeg`, `gh`, `gnupg`, `htop`, `jq`, `libasound2` (or `libasound2t64`), `libgtk-3-0`, `libx11-xcb1`, `nodejs`, `npm`, `pandoc`, `python3`, `python3-pip`, `ripgrep`, `tmux`, `unzip`, `wget` | apt / apk |
+| `ca-certificates`, `curl`, `ffmpeg`, `gh`, `gnupg`, `htop`, `jq`, `netcat-openbsd` (`nc`), `libasound2` (or `libasound2t64`), `libgtk-3-0`, `libx11-xcb1`, `nodejs`, `npm`, `pandoc`, `python3`, `python3-pip`, `ripgrep`, `tmux`, `unzip`, `wget` | apt / apk |
 | `google-cloud-cli` (`gcloud`) | apt only (Google Cloud SDK repo) |
 
 Package names above reflect Debian/Ubuntu. Alpine equivalents: `github-cli`, `alsa-lib`, `gtk+3.0`, `libx11`, `py3-pip`.
