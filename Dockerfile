@@ -17,6 +17,7 @@ RUN set -eu; \
         gnupg \
         htop \
         jq \
+        netcat-openbsd \
         "${ALSA_PKG}" \
         libgtk-3-0 \
         libx11-xcb1 \
@@ -40,6 +41,7 @@ RUN set -eu; \
         gtk+3.0 \
         htop \
         jq \
+        netcat-openbsd \
         libx11 \
         nodejs \
         npm \
