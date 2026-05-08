@@ -100,4 +100,18 @@ RUN set -eu; \
     unzip -q /tmp/opencli-extension.zip -d /opt/opencli/extension; \
     rm -f /tmp/opencli-extension.zip
 
+# tdl (Telegram downloader)
+RUN set -eu; \
+    ARCH="$(uname -m)"; \
+    case "${ARCH}" in \
+      x86_64) TDL_ARCH="64bit" ;; \
+      aarch64) TDL_ARCH="arm64" ;; \
+      *) echo "Unsupported architecture for tdl: ${ARCH}"; exit 1 ;; \
+    esac; \
+    TDL_VER="$(curl -fsSL https://api.github.com/repos/iyear/tdl/releases/latest | jq -r '.tag_name')"; \
+    test -n "${TDL_VER}"; \
+    curl -fsSL "https://github.com/iyear/tdl/releases/download/${TDL_VER}/tdl_Linux_${TDL_ARCH}.tar.gz" -o /tmp/tdl.tar.gz; \
+    tar -xzf /tmp/tdl.tar.gz -C /usr/local/bin; \
+    rm -f /tmp/tdl.tar.gz
+
 ENTRYPOINT [ "/usr/bin/tini", "-g", "--", "/opt/hermes/docker/entrypoint.sh" ]

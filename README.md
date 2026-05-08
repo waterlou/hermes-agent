@@ -37,6 +37,7 @@ Installed via `playwright install`: `chromium`, `firefox`, `webkit`
 
 ### Other
 
+- `tdl` — Telegram downloader (latest from GitHub releases, binary at `/usr/local/bin/tdl`)
 - OpenCLI browser extension (latest from GitHub releases) extracted to `/opt/opencli/extension`
 - Convenience symlinks: `rg` → `rp`, `yt-dlp` → `yt-ylp`
 
