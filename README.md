@@ -40,6 +40,7 @@ Installed via `playwright install`: `chromium`, `firefox`, `webkit`
 - `tdl` — Telegram downloader (latest from GitHub releases, binary at `/usr/local/bin/tdl`)
 - OpenCLI browser extension (latest from GitHub releases) extracted to `/opt/opencli/extension`
 - Convenience symlinks: `rg` → `rp`, `yt-dlp` → `yt-ylp`
+- `hermes-webui` — Web UI dashboard installed to `/opt/hermes-webui`, served on port `8787`. Started automatically by the entrypoint alongside the gateway.
 
 ## Build locally
 
@@ -53,7 +54,7 @@ docker build -t hermes-agent-custom .
 docker run --rm -it hermes-agent-custom
 ```
 
-Entrypoint: `tini -g -- /opt/hermes/docker/entrypoint.sh`
+Entrypoint: `tini -g -- /opt/hermes/docker/entrypoint-webui.sh` (patched copy of base `entrypoint.sh` that also starts the web UI)
 
 ## Launch Chromium with OpenCLI extension
 

@@ -114,4 +114,29 @@ RUN set -eu; \
     tar -xzf /tmp/tdl.tar.gz -C /usr/local/bin; \
     rm -f /tmp/tdl.tar.gz
 
-ENTRYPOINT [ "/usr/bin/tini", "-g", "--", "/opt/hermes/docker/entrypoint.sh" ]
+# Install hermes-webui (clone then archive to exclude .git)
+RUN set -eu; \
+    git clone --depth 1 --branch master \
+      https://github.com/nesquena/hermes-webui.git /tmp/hermes-webui-clone; \
+    git -C /tmp/hermes-webui-clone archive --format=tar --output=/tmp/hermes-webui.tar HEAD; \
+    mkdir -p /opt/hermes-webui; \
+    tar -xf /tmp/hermes-webui.tar -C /opt/hermes-webui; \
+    rm -rf /tmp/hermes-webui-clone /tmp/hermes-webui.tar; \
+    python3 -m pip install --no-cache-dir --break-system-packages -r /opt/hermes-webui/requirements.txt || \
+      python3 -m pip install --no-cache-dir -r /opt/hermes-webui/requirements.txt
+
+# Environment for webui
+ENV HERMES_WEBUI_AGENT_DIR=/opt/hermes \
+    HERMES_WEBUI_HOST=0.0.0.0 \
+    HERMES_WEBUI_PORT=8787 \
+    HERMES_WEBUI_STATE_DIR=/opt/data/webui
+
+EXPOSE 8787
+
+# Patch entrypoint: start webui after privilege drop to hermes, before gateway
+RUN cp /opt/hermes/docker/entrypoint.sh /opt/hermes/docker/entrypoint-webui.sh && \
+    sed -i '/^# Final exec:/i \
+# Start hermes-webui (spawns server in background, then returns)\
+python3 /opt/hermes-webui/bootstrap.py --no-browser' /opt/hermes/docker/entrypoint-webui.sh
+
+ENTRYPOINT [ "/usr/bin/tini", "-g", "--", "/opt/hermes/docker/entrypoint-webui.sh" ]
