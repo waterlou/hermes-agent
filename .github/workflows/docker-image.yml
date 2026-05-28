@@ -33,7 +33,7 @@ jobs:
       - name: Smoke test (OpenCLI in built image)
         run: |
           docker build --pull -t hermes-agent-smoke:ci .
-          # docker run --rm --entrypoint sh hermes-agent-smoke:ci -lc 'opencli --version'
+          docker run --rm --entrypoint sh hermes-agent-smoke:ci -lc 'opencli --version'
           docker run --rm --entrypoint sh hermes-agent-smoke:ci -lc 'gws --version'
 
       - name: Log in to GHCR
