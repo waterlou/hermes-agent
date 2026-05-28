@@ -75,4 +75,4 @@ GitHub Actions workflow:
 - Builds on push/pull request/manual trigger
 - Rebuilds daily to pick up base image updates
 - Publishes image to GitHub Container Registry (`ghcr.io/<owner>/<repo>`)
-- Runs a smoke test to verify `opencli` and `gws` are available in the built image
+- Runs a smoke test to verify `gws` is available in the built image (`opencli` test temporarily skipped)
