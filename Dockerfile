@@ -79,11 +79,11 @@ RUN set -eu; \
       playwright install chromium firefox webkit; \
     fi
 
-# pip packages and camoufox
+# pip packages and camoufox (use system python, not the base image's venv)
 RUN set -eu; \
-    python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0" || \
-      python3 -m pip install --no-cache-dir -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0"; \
-    python3 -m camoufox fetch
+    /usr/bin/python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0" || \
+      /usr/bin/python3 -m pip install --no-cache-dir -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0"; \
+    /usr/bin/python3 -m camoufox fetch
 
 # Convenience symlinks and opencli extension
 RUN set -eu; \
@@ -122,8 +122,8 @@ RUN set -eu; \
     mkdir -p /opt/hermes-webui; \
     tar -xf /tmp/hermes-webui.tar -C /opt/hermes-webui; \
     rm -rf /tmp/hermes-webui-clone /tmp/hermes-webui.tar; \
-    python3 -m pip install --no-cache-dir --break-system-packages -r /opt/hermes-webui/requirements.txt || \
-      python3 -m pip install --no-cache-dir -r /opt/hermes-webui/requirements.txt
+    /usr/bin/python3 -m pip install --no-cache-dir --break-system-packages -r /opt/hermes-webui/requirements.txt || \
+      /usr/bin/python3 -m pip install --no-cache-dir -r /opt/hermes-webui/requirements.txt
 
 # Environment for webui
 ENV HERMES_WEBUI_AGENT_DIR=/opt/hermes \
