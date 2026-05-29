@@ -133,10 +133,13 @@ ENV HERMES_WEBUI_AGENT_DIR=/opt/hermes \
 
 EXPOSE 8787
 
-# Patch entrypoint: start webui after privilege drop to hermes, before gateway
-RUN cp /opt/hermes/docker/entrypoint.sh /opt/hermes/docker/entrypoint-webui.sh && \
-    sed -i '/^# Final exec:/i \
-# Start hermes-webui (spawns server in background, then returns)\
-python3 /opt/hermes-webui/bootstrap.py --no-browser' /opt/hermes/docker/entrypoint-webui.sh
+# Create wrapper that starts webui then execs the real main-wrapper.sh
+RUN printf '#!/bin/sh\n\
+# Start hermes-webui (spawns server in background, then returns)\n\
+python3 /opt/hermes-webui/bootstrap.py --no-browser\n\
+# Hand off to the real main-wrapper.sh with all arguments\n\
+exec /opt/hermes/docker/main-wrapper.sh "$@"\n' \
+    > /opt/hermes/docker/main-wrapper-webui.sh && \
+    chmod +x /opt/hermes/docker/main-wrapper-webui.sh
 
-ENTRYPOINT [ "/usr/bin/tini", "-g", "--", "/opt/hermes/docker/entrypoint-webui.sh" ]
+ENTRYPOINT [ "/init", "/opt/hermes/docker/main-wrapper-webui.sh" ]
