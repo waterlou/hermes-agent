@@ -85,6 +85,11 @@ RUN set -eu; \
       /usr/bin/python3 -m pip install --no-cache-dir -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0"; \
     /usr/bin/python3 -m camoufox fetch
 
+# A2A plugins (into the base image's hermes venv; venv ships without pip)
+RUN set -eu; \
+    /opt/hermes/.venv/bin/python -m ensurepip --upgrade; \
+    /opt/hermes/.venv/bin/python -m pip install --no-cache-dir -U hermes-agent-a2a
+
 # Convenience symlinks and opencli extension
 RUN set -eu; \
     if command -v rg >/dev/null 2>&1 && ! command -v rp >/dev/null 2>&1; then \
