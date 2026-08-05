@@ -125,13 +125,45 @@ ENV HERMES_WEBUI_AGENT_DIR=/opt/hermes \
 
 EXPOSE 8787
 
-# Create wrapper that starts webui then execs the real main-wrapper.sh
-RUN printf '#!/bin/sh\n\
-# Start hermes-webui (spawns server in background, then returns)\n\
-python3 /opt/hermes-webui/bootstrap.py --no-browser\n\
-# Hand off to the real main-wrapper.sh with all arguments\n\
-exec /opt/hermes/docker/main-wrapper.sh "$@"\n' \
-    > /opt/hermes/docker/main-wrapper-webui.sh && \
-    chmod +x /opt/hermes/docker/main-wrapper-webui.sh
+# Register hermes-webui as an s6-rc longrun service, mirroring the base
+# image's dashboard service pattern (see /etc/s6-overlay/s6-rc.d/dashboard).
+# s6-rc compiles this tree at boot; adding the name to the "user" bundle
+# (an empty contents.d file, same as dashboard/main-hermes) auto-starts it.
+# The service is therefore supervised independently of the container CMD:
+# if the webui crashes, s6-supervise restarts it.
+#
+# --foreground is required: bootstrap.py daemonizes and exits unless told
+# otherwise, which would make s6-supervise restart the slot in a tight loop
+# while the orphaned server keeps port 8787 bound. --foreground implies
+# --no-browser and skips the post-launch health probe (s6 handles liveness).
+RUN set -eu; \
+    SVC=/etc/s6-overlay/s6-rc.d/hermes-webui; \
+    mkdir -p "$SVC/dependencies.d"; \
+    printf 'longrun\n' > "$SVC/type"; \
+    : > "$SVC/dependencies.d/base"; \
+    printf '%s\n' \
+      '#!/command/with-contenv sh' \
+      '# shellcheck shell=sh' \
+      '# hermes-webui service — mirrors the base image dashboard s6-rc pattern.' \
+      '# Runs the webui server in-process (--foreground) so s6-supervise' \
+      '# tracks the actual server and restarts it on crash.' \
+      'export HOME=/opt/data' \
+      'cd /opt/data' \
+      '[ "$(id -u)" = 0 ] || exec /usr/bin/python3 /opt/hermes-webui/bootstrap.py --foreground' \
+      'exec s6-setuidgid hermes /usr/bin/python3 /opt/hermes-webui/bootstrap.py --foreground' \
+      > "$SVC/run"; \
+    printf '%s\n' \
+      '#!/command/with-contenv sh' \
+      '# shellcheck shell=sh' \
+      '# hermes-webui finish script. Always exit non-125 so s6-supervise' \
+      '# restarts the service whenever the run script exits (crash-restart).' \
+      'exit 0' \
+      > "$SVC/finish"; \
+    chmod +x "$SVC/run" "$SVC/finish"; \
+    : > /etc/s6-overlay/s6-rc.d/user/contents.d/hermes-webui
 
-ENTRYPOINT [ "/init", "/opt/hermes/docker/main-wrapper-webui.sh" ]
+# Restore the base image entrypoint (the dispatcher). On the PID-1 path it
+# execs /init (full s6 supervision tree); on wrapped runtimes (docker run
+# --init, Fly, K8s) it falls back to direct bootstrap + main-wrapper. The
+# container CMD (`gateway run`, passed by compose) is unchanged.
+ENTRYPOINT [ "/opt/hermes/docker/entrypoint-dispatch.sh" ]
