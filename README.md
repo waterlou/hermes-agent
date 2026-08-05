@@ -23,10 +23,6 @@ Package names above reflect Debian/Ubuntu. Alpine equivalents: `github-cli`, `al
 | `@jackwener/opencli` | `1.7.11` | `opencli` |
 | `@googleworkspace/cli` | `0.22.5` | `gws` |
 
-### Playwright browsers
-
-Installed via `playwright install`: `chromium`, `firefox`, `webkit`
-
 ### pip packages
 
 | Package | Version |

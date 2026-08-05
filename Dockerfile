@@ -71,14 +71,6 @@ RUN set -eu; \
 RUN set -eu; \
     npm install -g playwright@1.59.1 tldr@3.5.0 @bitwarden/cli@2026.4.1 @jackwener/opencli@1.7.11 @googleworkspace/cli@0.22.5
 
-# Playwright browsers
-RUN set -eu; \
-    if command -v apt-get >/dev/null 2>&1; then \
-      playwright install --with-deps chromium firefox webkit; \
-    else \
-      playwright install chromium firefox webkit; \
-    fi
-
 # pip packages and camoufox (use system python, not the base image's venv)
 RUN set -eu; \
     /usr/bin/python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0" || \
