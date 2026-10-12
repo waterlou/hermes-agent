@@ -68,17 +68,27 @@ RUN set -eu; \
     fi
 
 # npm global packages
+# The base image's npm prefix is a versioned tools dir
+# (/opt/hermes/tools/node-<version>-linux-<arch>) which /etc/profile drops from
+# PATH on login shells, so global bins installed there are unreachable — e.g.
+# CI's `sh -lc 'opencli --version'` smoke test exits 127. Install into
+# /usr/local, which is on the default PATH in every shell mode.
 RUN set -eu; \
-    npm install -g playwright@1.59.1 tldr@3.5.0 @bitwarden/cli@2026.4.1 @jackwener/opencli@1.7.11 @googleworkspace/cli@0.22.5
+    NPM_CONFIG_PREFIX=/usr/local npm install -g playwright@1.64.0 tldr@3.5.0 @bitwarden/cli@2026.9.1 @jackwener/opencli@1.8.8 @googleworkspace/cli@0.22.5
 
 # pip packages and camoufox (use system python, not the base image's venv)
 RUN set -eu; \
-    /usr/bin/python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0" || \
-      /usr/bin/python3 -m pip install --no-cache-dir -U "camoufox[geoip]==0.4.11" "yt-dlp==2026.3.17" "docling==2.92.0"; \
+    /usr/bin/python3 -m pip install --no-cache-dir --break-system-packages -U "camoufox[geoip]==0.5.6" "yt-dlp==2026.8.19" "docling==2.137.0" || \
+      /usr/bin/python3 -m pip install --no-cache-dir -U "camoufox[geoip]==0.5.6" "yt-dlp==2026.8.19" "docling==2.137.0"; \
     /usr/bin/python3 -m camoufox fetch
 
 # Convenience symlinks and opencli extension
 RUN set -eu; \
+    # The parent image's pip `playwright` (console script) sits at
+    # /usr/local/bin/playwright, the same path npm would link to, so the Python
+    # 1.62 CLI shadows the npm 1.64 CLI. Point `playwright` at the npm binary —
+    # the python package stays installed for its library API.
+    ln -sf /usr/local/lib/node_modules/playwright/cli.js /usr/local/bin/playwright; \
     if command -v rg >/dev/null 2>&1 && ! command -v rp >/dev/null 2>&1; then \
       ln -s "$(command -v rg)" /usr/local/bin/rp; \
     fi; \

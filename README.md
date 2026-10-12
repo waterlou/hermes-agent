@@ -17,19 +17,19 @@ Package names above reflect Debian/Ubuntu. Alpine equivalents: `github-cli`, `al
 
 | Package | Version | CLI command |
 |---|---|---|
-| `playwright` | `1.59.1` | |
+| `playwright` | `1.64.0` | |
 | `tldr` | `3.5.0` | `tldr` |
-| `@bitwarden/cli` | `2026.4.1` | `bw` |
-| `@jackwener/opencli` | `1.7.11` | `opencli` |
+| `@bitwarden/cli` | `2026.9.1` | `bw` |
+| `@jackwener/opencli` | `1.8.8` | `opencli` |
 | `@googleworkspace/cli` | `0.22.5` | `gws` |
 
 ### pip packages
 
 | Package | Version |
 |---|---|
-| `camoufox[geoip]` | `0.4.11` |
-| `yt-dlp` | `2026.3.17` |
-| `docling` | `2.92.0` |
+| `camoufox[geoip]` | `0.5.6` |
+| `yt-dlp` | `2026.8.19` |
+| `docling` | `2.137.0` |
 
 ### Other
 
