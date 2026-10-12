@@ -36,7 +36,11 @@ Package names above reflect Debian/Ubuntu. Alpine equivalents: `github-cli`, `al
 - `tdl` — Telegram downloader (latest from GitHub releases, binary at `/usr/local/bin/tdl`)
 - OpenCLI browser extension (latest from GitHub releases) extracted to `/opt/opencli/extension`
 - Convenience symlinks: `rg` → `rp`, `yt-dlp` → `yt-ylp`
-- `hermes-webui` — Web UI dashboard installed to `/opt/hermes-webui`, served on port `8787`. Started automatically by the entrypoint alongside the gateway.
+- `hermes-webui` — Web UI installed to `/opt/hermes-webui`, served on port `8787`.
+  Run as an `s6-rc` longrun service (see [Run](#run)) so it is supervised and
+  restart-on-crash, independent of the container command.
+  Defaults: `HERMES_WEBUI_AGENT_DIR=/opt/hermes`, `HERMES_WEBUI_HOST=0.0.0.0`,
+  `HERMES_WEBUI_PORT=8787`, `HERMES_WEBUI_STATE_DIR=/opt/data/webui`.
 
 ## Build locally
 
@@ -50,7 +54,34 @@ docker build -t hermes-agent-custom .
 docker run --rm -it hermes-agent-custom
 ```
 
-Entrypoint: `tini -g -- /opt/hermes/docker/entrypoint-webui.sh` (patched copy of base `entrypoint.sh` that also starts the web UI)
+Entrypoint: `/opt/hermes/docker/entrypoint-dispatch.sh` (from the base image).
+On the PID-1 path it execs `/init`, giving the full s6-overlay supervision
+tree; on wrapped runtimes (`docker run --init`, Fly, K8s) it falls back to a
+direct bootstrap + `main-wrapper.sh`.
+
+The web UI runs as the `hermes-webui` **s6-rc longrun service**
+(`/etc/s6-overlay/s6-rc.d/hermes-webui`, added to the `user` bundle so it
+auto-starts). It mirrors the base image's `dashboard` service: `s6-supervise`
+owns the process and restarts it on crash. It runs `bootstrap.py --foreground`
+so s6 tracks the real server instead of a daemonized orphan.
+
+## Packaging notes
+
+- **npm global prefix.** The base image sets npm's global prefix to a versioned
+  tools dir (`/opt/hermes/tools/node-<version>-linux-<arch>`), which
+  `/etc/profile` drops from PATH on login shells. Global bins installed there are
+  therefore unreachable — e.g. `sh -lc 'opencli --version'` exits 127. Globals
+  are installed with `NPM_CONFIG_PREFIX=/usr/local`, which is on PATH in every
+  shell mode.
+- **playwright CLI shadow.** The base image ships the pip `playwright` (console
+  script at `/usr/local/bin/playwright`) alongside the npm one, so the Python
+  CLI shadows the npm CLI at the same path. The Dockerfile re-points
+  `/usr/local/bin/playwright` at the npm `cli.js`; the pip package stays
+  installed for its Python library API only.
+- **camoufox pin.** Held at `0.5.6`. `0.5.7+` depends on `fpgen` →
+  `indexed-zstd`, which publishes no Linux aarch64 wheel (x86_64 only), so the
+  arm64 image leg cannot build. Bump only once upstream ships aarch64 wheels or
+  a `libzstd-dev` build path is added.
 
 ## Launch Chromium with OpenCLI extension
 
@@ -71,4 +102,6 @@ GitHub Actions workflow:
 - Builds on push/pull request/manual trigger
 - Rebuilds daily to pick up base image updates
 - Publishes image to GitHub Container Registry (`ghcr.io/<owner>/<repo>`)
-- Runs a smoke test to verify `opencli` and `gws` are available in the built image
+- Runs a smoke test (via login shell) to verify `opencli` and `gws` are available
+  in the built image — this catches PATH regressions like
+  [npm global prefix](#packaging-notes)
